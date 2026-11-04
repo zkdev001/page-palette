@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Palette</title>
+    <link rel="stylesheet" href="popup.css" />
+    <script src="popup.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Page Palette</h1>
+        <p id="site" class="site">Checking website…</p>
+      </header>
+
+      <section class="access" aria-labelledby="access-title">
+        <div class="access-head">
+          <strong id="access-title">This website</strong>
+          <span id="access-state" class="state">Off</span>
+        </div>
+        <button type="button" id="site-access" class="access-button">Enable on this site</button>
+        <p class="hint">Only sites you enable receive page access. Disabling revokes access.</p>
+      </section>
+
+      <section aria-labelledby="colors-title">
+        <div class="section-head">
+          <h2 id="colors-title">Site colors</h2>
+          <span class="micro">Click a swatch to pick</span>
+        </div>
+        <div class="color-row">
+          <label for="background">Background</label>
+          <div class="picker-pair">
+            <code id="background-value">#f7f1e7</code>
+            <input id="background" type="color" value="#f7f1e7" aria-label="Background color" />
+          </div>
+        </div>
+        <div class="color-row">
+          <label for="text-color">Text</label>
+          <div class="picker-pair">
+            <code id="text-value">#292622</code>
+            <input id="text-color" type="color" value="#292622" aria-label="Text color" />
+          </div>
+        </div>
+        <div class="preview" id="preview" aria-label="Color preview">
+          <strong>Preview</strong>
+          <span>This is how text will look.</span>
+        </div>
+      </section>
+
+      <section aria-labelledby="themes-title">
+        <h2 id="themes-title">Quick themes</h2>
+        <div class="presets">
+          <button type="button" data-preset="paper">Warm paper</button>
+          <button type="button" data-preset="gray">Soft gray</button>
+          <button type="button" data-preset="white">White</button>
+        </div>
+      </section>
+
+      <section class="defaults" aria-labelledby="default-title">
+        <h2 id="default-title">My default colors</h2>
+        <div class="actions">
+          <button type="button" id="use-default">Use my default</button>
+          <button type="button" id="save-default">Save as default</button>
+        </div>
+        <p class="hint">New sites start with your default. Each site's colors can be different.</p>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+  </body>
+</html>
