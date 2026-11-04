@@ -1,6 +1,6 @@
 # Page Palette 1.1 — Brave extension
 
-Give individual websites a comfortable light background and readable text, with a native color picker and a personal default.
+Give individual websites a comfortable background and readable text, with a native color picker and a personal default.
 
 ## What's new
 
