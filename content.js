@@ -18,42 +18,37 @@
       : fallback;
   }
 
-  // Generate a high-contrast light theme while keeping input fields legible.
+  // Apply colors to page surfaces without destroying website styling.
   function buildStyles(settings) {
     const background = safeColor(settings.background, "#f7f1e7");
     const ink = safeColor(settings.text, "#292622");
-    const panel = background.toLowerCase() === "#ffffff" ? "#ededed" : "#ffffff";
 
     return `
-      :root { color-scheme: light !important; }
-      html, body { background: ${background} !important; color: ${ink} !important; }
-      body, body *:not(svg):not(svg *) {
+      :root {
+        color-scheme: light !important;
+      }
+
+      html, body {
+        background-color: ${background} !important;
         color: ${ink} !important;
-        -webkit-text-fill-color: ${ink} !important;
-        text-shadow: none !important;
-        border-color: #a7adb5 !important;
       }
-      body *:not(svg):not(svg *),
-      body *:not(svg):not(svg *)::before,
-      body *:not(svg):not(svg *)::after {
-        background-color: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
-      }
-      body :where(input, textarea, select, button, [role="button"], pre, code, blockquote, th, td) {
-        background-color: ${panel} !important;
+
+      /* Recolor major content surfaces instead of every element. */
+      :where(main, [role="main"], [data-testid="primaryColumn"], [data-testid="sidebarColumn"]) {
+        background-color: ${background} !important;
         color: ${ink} !important;
-        -webkit-text-fill-color: ${ink} !important;
       }
-      body :where(a, a *):not(svg):not(svg *) {
-        color: #154bb4 !important;
-        -webkit-text-fill-color: #154bb4 !important;
+
+      /* Adjust ordinary text without changing links or buttons. */
+      :where(main, [role="main"]) :where(h1, h2, h3, h4, h5, h6, p) {
+        color: ${ink} !important;
       }
-      body :where(input, textarea, select)::placeholder {
-        color: #686d75 !important;
-        -webkit-text-fill-color: #686d75 !important;
+
+      /* Preserve the website's original interactive styling. */
+      body ::selection {
+        background-color: #bfd2f5 !important;
+        color: #141414 !important;
       }
-      body ::selection { background: #bfd2f5 !important; color: #141414 !important; }
     `;
   }
 
@@ -83,9 +78,13 @@
       const parent = document.head || document.documentElement;
       // At document_start, the page's root may not exist yet.
       if (!parent) {
-        document.addEventListener("DOMContentLoaded", () => {
-          if (!stopped) refresh();
-        }, { once: true });
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            if (!stopped) refresh();
+          },
+          { once: true },
+        );
         return;
       }
       ownedStyle = document.createElement("style");
