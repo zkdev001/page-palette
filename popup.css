@@ -8,13 +8,8 @@
 body {
   margin: 0;
   width: 330px;
-  background: #f7f6f2;
-  color: #252a30;
-  font:
-    13px/1.4 system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
+  background: #201f23;
+  color: #ffffff;
 }
 main {
   padding: 16px;
