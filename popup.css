@@ -173,3 +173,23 @@ input[type="color"] {
 .status.error {
   color: #aa2626;
 }
+
+/* Keep custom controls compact and readable within the existing popup. */
+.custom-elements { margin: 12px 0; border: 1px solid #667080; border-radius: 8px; padding: 10px; }
+.custom-elements summary { cursor: pointer; font-weight: 700; }
+.custom-elements summary:focus-visible { outline: 2px solid #67c9ff; }
+#custom-count { float: right; color: #c1ccdc; }
+#pick-element { width: 100%; margin-top: 10px; }
+.custom-card { padding: 12px 0; border-top: 1px solid #667080; margin-top: 12px; }
+.custom-card > input[type="text"] { width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #adb6c0; font: inherit; }
+.custom-color { display: flex; gap: 7px; align-items: center; margin-top: 8px; }
+.custom-color input[type="color"] { margin-left: auto; }
+.custom-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.custom-actions button { flex: 1; font-size: 11px; }
+.delete-element { color: #a02e2e; }
+.custom-elements .hint { color: #c1ccdc; overflow-wrap: anywhere; }
+/* Correct the existing white-on-white access heading and dim dark-panel labels. */
+.access { color: #252a30; }
+.site, .micro, .picker-pair code, .defaults .hint { color: #b6bfcc; }
+.status { color: #9bd9b4; }
+.status.error { color: #ffb4b4; }

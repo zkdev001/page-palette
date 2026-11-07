@@ -1,43 +1,88 @@
-# Page Palette 1.1 — Brave extension
+# Page Palette 1.2 — Brave extension
 
-Give individual websites a comfortable background and readable text, with a native color picker and a personal default.
+Per-site background and text colors, personal defaults, and a new element picker for sections the general settings do not reach.
 
-## What's new
+## Upgrade without losing settings
 
-- **Per-site opt-in:** No content script is installed on every page. Click **Enable on this site** to grant Brave's permission just for that site's host and protocol. The approved site keeps working after navigation or browser restart.
-- **Safer styling:** The content script keeps a direct reference to its own `<style>` element instead of looking it up by an ID a website could already be using.
-- **Default + overrides:** Start with warm paper and dark text. Click either color swatch to use Brave's native color picker. Save an override for this site or save your current colors as the default for future sites.
+1. Keep a backup of your current extension files.
+2. Extract this ZIP and copy the contents of its `page-palette` folder into the **same unpacked extension folder you already use**. Replace the existing files. Keep your existing Git folder if you use Git.
+3. Open `brave://extensions` and click **Reload** on Page Palette.
+4. Refresh the website tabs you want to customize. This replaces the old content script already running in those tabs.
 
-## Install or upgrade in Brave
+Do not remove and reinstall the extension to update it: removing it can delete its saved settings. This update keeps the existing site and default storage keys and requests no new permission types.
 
-1. Extract this ZIP somewhere permanent, such as `Documents\page-palette`.
-2. If an older Page Palette is installed at `brave://extensions`, remove or disable it first to avoid two copies overriding the same page.
-3. Open `brave://extensions`, enable **Developer mode**, and choose **Load unpacked**.
-4. Select the inner `page-palette` directory containing `manifest.json`.
-5. Pin the extension to Brave's toolbar if desired.
-6. Visit a regular HTTP/HTTPS site and open Page Palette. Choose a theme or your own colors, then click **Enable on this site** and approve the site-specific permission prompt.
+For a new installation, enable Developer mode at `brave://extensions`, choose **Load unpacked**, and select the folder containing `manifest.json`.
 
-For an in-place update, replace the contents of the original unpacked extension folder with the files from this archive, click **Reload** at `brave://extensions`, and refresh any already-open tabs. This preserves the extension's existing storage and saved site choices. Older saved sites may need **Enable on this site** clicked once to receive site permission.
+## Pick and recolor a container
 
-## How it works
+1. Enable Page Palette on the current site if necessary.
+2. Under **Site colors**, expand **Custom Elements** and click **Pick an element**. The popup closes and a floating editor opens on the page.
+3. Hover to highlight an HTML element. Click to select it; the picker intercepts ordinary pointer actions so selecting a link does not navigate.
+4. Use **Select larger area** to move to its parent container. Repeat as needed. **Back to smaller area** retraces your selection. **Pick another** starts selection again.
+5. Give the selection a useful name. Check **Background**, **Text**, or **Border** to enable that override, then choose a color. Unchecked properties are untouched.
+6. **Save** stores the change. **Cancel** or **Escape** discards the preview. Tab stays within the floating editor.
 
-- The popup itself is the dropdown panel; clicking the background or text color swatch opens Brave's built-in color picker.
-- **Warm paper**, **Soft gray**, and **White** are quick site color choices.
-- **Save as default** changes your preferred colors for future unconfigured sites. **Use my default** copies those defaults to the current site.
-- Changes to colors on an enabled site take effect immediately. Colors chosen for disabled sites are saved but **do not** grant access or change the page until enabled.
-- **Disable on this site** restores the site's appearance, unregisters its future content script, and revokes its optional site permission. Because already-injected JavaScript cannot literally be uninjected, it also removes its own stylesheet and storage-change listener when it sees the disabled state.
-- The host-permission prompt applies to the current protocol and hostname (for example `https://example.com/*`). Standard browser match patterns cannot distinguish different ports on the same hostname.
-- No data is sent to external services. Preferences remain in Brave's extension-local storage.
+A background change affects the selected container, not every child. If a child has its own opaque background, select that child or save another override. Text colors inherit only where the website has not assigned a separate color to a descendant. Border color does not create a border that was previously absent.
 
-## Notes
+## Manage Custom Elements
 
-- Brave/Chromium does not allow extensions to restyle internal pages (`brave://`, Chrome Web Store, etc.).
-- For tabs already open when a site is first enabled, the current tab updates immediately; other existing tabs on that site may need a reload.
-- Some complicated websites may lose background images or decorative colors when forced into a light palette.
-- This extension intentionally does not read website text or collect page content; it changes colors only.
+The submenu lists saved entries for the current origin (protocol, hostname, and port):
+
+- Edit the name or colors; changes save when the field commits.
+- Uncheck a color to remove only that property's override.
+- **Disable / Enable** suspends or restores an individual entry.
+- **Show on page** scrolls to the target and highlights it briefly, even if that entry is disabled.
+- **Delete** removes the saved entry and its effect.
+
+For safer matching, each entry is restricted to the page pathname where it was selected. Entries from other pages on the same site remain in the list and show **Saved on another page**. Query strings and fragments do not change this scope. Missing or ambiguous targets are reported instead of choosing a fallback. Re-pick an element if the site changes its structure. Saving the exact same target again replaces its existing entry.
+
+Disabling Page Palette for a site removes both general and custom styles, closes the picker, stops its observers/listeners, and revokes the optional host access through the existing cleanup flow. Saved custom entries remain available when you enable the site again. Removal always removes Page Palette's own stylesheet rules; it never writes a snapshot of an old color back into website styles.
+
+## Existing features
+
+- Background and Text swatches change general site colors.
+- Warm paper, Soft gray, and White are quick themes.
+- Save as default sets your preferred colors for future sites.
+- Use my default copies those colors to the current site.
+- A site must be explicitly enabled before any page injection takes place.
+- No external services or network requests are used by the extension. Settings and element identifiers stay in extension-local storage.
+
+## Limits
+
+- This version selects ordinary HTML elements in the top-level document. Embedded frames, SVG internals, shadow-root internals, canvas pixels, image pixels, and pseudo-elements are not individually editable.
+- Inline `!important` declarations or sufficiently strong website CSS may override a chosen color. Background images or gradients may cover a background-color change.
+- Locators prefer IDs/classes and fall back to structural positions. Large website changes can invalidate a locator, and structurally identical replacement elements cannot always be distinguished. Disable, delete, or re-pick the entry if a site's layout changes.
+- Browser-internal pages and other pages where Brave disallows extension injection cannot be customized.
+- Standard host-permission match patterns do not distinguish ports, although saved settings do.
+- Two simultaneous saves to the same custom-element list in different tabs are not transactionally merged. Finish one edit before saving another in another tab.
+
+## Validation
+
+JavaScript syntax checks and deterministic Node harness checks passed for:
+
+- Selection, parent/back navigation, pointer-click interception, preview rollback, and cleanup.
+- Save, individual toggle, delete, reload persistence, and site-disable cleanup while retaining records.
+- Page/origin isolation, missing/ambiguous targets, and invalid CSS/locator rejection.
+- Popup list rendering, safe name handling, edits, and preservation of other-site and general settings.
+
+Run from this folder with Node 18 or later:
+
+```sh
+node --check content.js
+node --check popup.js
+node tests/controller.cjs
+node tests/popup.cjs
+```
+
+The harness uses a mocked DOM and Chrome APIs; it does not verify native rendering, browser permissions, or browser storage persistence across an actual restart. A live browser launch was blocked in the build environment.
+
+### Brave acceptance check
+
+After reloading the extension and page, select a paragraph, move up to the black container, check Background, and choose a softer color. Try Cancel first, then repeat and Save. Reopen Custom Elements to edit, disable, re-enable, highlight, and delete the entry. Save another entry and verify it after refreshing the page and restarting Brave. Finally disable Page Palette for the site and verify that its styling and picker are removed. These native Brave checks remain unverified.
 
 ## Files
 
-- `manifest.json` — permissions and extension metadata.
-- `popup.html`, `popup.css`, `popup.js` — the user interface, settings, and per-site permissions.
-- `content.js` — site styling for enabled origins only.
+- `manifest.json` — metadata and the unchanged permission model.
+- `popup.html`, `popup.css`, `popup.js` — site controls and Custom Elements management.
+- `content.js` — general styling, custom rules, element picker, and cleanup.
+- `tests/` — dependency-free controller and popup harnesses.

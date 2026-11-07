@@ -1,10 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Page Palette",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Change site background and text colors, with per-site opt-in and personal defaults.",
-  "permissions": ["activeTab", "storage", "scripting"],
-  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "action": {
     "default_title": "Page Palette",
     "default_popup": "popup.html"
